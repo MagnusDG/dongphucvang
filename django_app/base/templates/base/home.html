@@ -1,0 +1,242 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+/* Định nghĩa các màu sắc cho các trạng thái khác nhau */
+.order-item[data-order-status="Đang xử lý"] {
+    background-color: #ffffcc; /* Màu cho đơn hàng đang xử lý */
+}
+
+.order-item[data-order-status="Đã cọc"] {
+    background-color: #ccf7ff; /* Màu cho đơn hàng đã cọc */
+}
+
+.order-item[data-order-status="Đã sản xuất"] {
+    background-color: #cce6ff; /* Màu cho đơn hàng đã sản xuất */
+}
+
+.order-item[data-order-status="Đã giao"] {
+    background-color: #ccffd3; /* Màu cho đơn hàng đã giao */
+}
+
+.order-item[data-order-status="Đã hủy"] {
+    background-color: #ffcccc; /* Màu cho đơn hàng đã hủy */
+}
+
+
+
+
+
+
+/* Điều chỉnh padding cho thẻ th, td */
+th, td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 10px;
+    font-size: 14px;
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 20px; /* Thêm khoảng cách bên trái */
+    padding-right: 20px; /* Thêm khoảng cách bên phải */
+}
+
+/* Di chuyển phần chọn thời gian và nút lọc sang phải */
+.filter-section {
+  display:block;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-section form {
+  margin-right: 10px;
+}
+
+.filter-section label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+
+.filter-section select {
+  width: 200px;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+#filter-form input {
+    width: 150px;
+    padding: 8px 12px 8px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.filter-section button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.filter-section button:hover {
+  background-color: #45a049;
+}
+
+
+/* Bo tròn và di chuyển phần chọn thời gian và nút lọc */
+input[type="month"],
+button.filter-button {
+    border-radius: 5px;
+    border: none;
+    padding: 8px 16px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 14px;
+    vertical-align: middle; /* Đưa các phần tử vào trung tâm dọc */
+}
+
+/* Bỏ khoảng cách trái ở phần tử đầu tiên của .filter-section */
+.filter-section *:first-child {
+    margin-left: 0;
+}
+
+input[type="month"],
+button.filter-button {
+    border-radius: 5px;
+    border: none;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 14px;
+}
+
+button.filter-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button.filter-button:hover {
+    background-color: #45a049;
+}
+
+/* Order item styles */
+.order-item {
+    transition: transform 0.3s ease-in-out;
+}
+
+.order-item:hover {
+    transform: scale(1.03);
+}
+
+</style>
+
+
+<main>
+    <div class="content-block">
+        <div class="content-header">
+            <h3>Theo dõi đơn hàng</h3>
+
+
+        <div class="filter-section">
+            <form method="GET" id="filter-form" action="">
+                {% csrf_token %}
+                <label for="month-picker">Chọn tháng:</label>   
+                <input type="month" id="month-picker" name="selected_month">
+                <label for="filter-style">Lọc theo kiểu dáng:</label>
+                <select id="style_filter" name="style_filter">
+                    <option value="Tất cả">Tất cả</option>
+                    <option value="Cổ bẻ">Cổ bẻ</option>
+                    <option value="Cổ trụ">Cổ trụ</option>
+                    <option value="Cổ tim">Cổ tim</option>
+                    <option value="Cổ tròn">Cổ tròn</option>
+                    <option value="Cổ chữ V">Cổ chữ V</option>
+                    <option value="Cổ chữ U">Cổ chữ U</option>
+                    <option value="Cổ sơ mi">Cổ sơ mi</option>
+                    <option value="Cổ đức">Cổ đức</option>
+                </select>
+
+                <label for="filter-material">Lọc theo chất liệu:</label>
+                <select id="material_filter" name="material_filter">
+                    <option value="Tất cả">Tất cả</option>
+                    <option value="Cotton">Cotton</option>
+                    <option value="Lụa">Lụa</option>
+                    <option value="Kaki">Kaki</option>
+                    <option value="Jeans">Jeans</option>
+                    <option value="Lanh">Lanh/option>
+                    <option value="Thun">Thun</option>
+                    <option value="Nỉ">Nỉ</option>
+                    <option value="Vải dù">Vải dù/option>
+                    <option value="Vải mưa">Vải mưa</option>
+                </select>
+
+
+                <label for="filter-color">Lọc theo màu sắc:</label>
+                <input type="text" id="filter-color" name="color_filter">
+
+                <label for="filter-printing">Lọc theo in/thêu:</label>
+                <input type="text" id="filter-printing" name="print_filter">
+
+                <button id="apply-filters">Áp dụng</button>
+            </form>
+        </div>
+    
+
+
+
+        <div class="content-frame">
+            <table id="orders-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Mã đơn hàng</th>
+                        <th rowspan="2">Tên đơn</th>
+                        <th colspan="4">Chi tiết đơn hàng</th>
+                        <th rowspan="2">Số lượng</th>
+                        <th rowspan="2">Tên xưởng sản xuất</th>
+                        <th rowspan="2">Tình trạng đơn hàng</th>
+                        <th rowspan="2">Ngày hoàn thành</th>
+                        <th rowspan="2">Ngày giao</th>
+                    </tr>
+                    <tr>
+                        <th>Kiểu dáng</th>
+                        <th>Chất liệu</th>
+                        <th>Màu sắc</th>
+                        <th>In/Thêu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr class="order-item" data-order-status="{{ order.status }}">
+                            <td><a href="{% url 'order' order.id %}">Đơn hàng #{{ order.order_id }}</a></td>
+                            <td>{{ order.name }}</td>
+                            <td>{{ order.style }}</td>
+                            <td>{{ order.material }}</td>
+                            <td>{{ order.color }}</td>
+                            <td>{{ order.printing }}</td>
+                            <td>{{ order.total_quantity }}</td>
+                            <td>{{ order.prodPlant }}</td>
+                            <td>{{ order.status }}</td>
+                            <td>{{ order.completed_date }}</td>
+                            <td>{{ order.delivery_date }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="11">Hiện chưa có đơn hàng nào.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
+
+    </div>
+</main>
+
+
+
+
+{% endblock content %}

@@ -1,0 +1,199 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<main>
+    <div id="container">
+        <div class="left-column">
+            <div class="content-block" id="customerInfo">
+                <div class="content-header">
+                    <h3>Thông tin khách hàng</h3>
+                </div>
+                <div class="content-detail">
+                    <p><strong>Tên khách hàng:&emsp;</strong>{{ order.customer.last_name }} {{ order.customer.first_name }}</p>
+                    <p><strong>Địa chỉ:&emsp;</strong>{{ order.customer.address }}</p>
+                    <p><strong>Số điện thoại:&emsp;</strong>{{ order.customer.phone_number }}</p>
+                    <p><strong>Email:&emsp;</strong>{{ order.customer.email }}</p>
+                </div>
+            </div>
+    
+            <div class="content-block" id="orderInfo">
+                <div class="content-header">
+                    <h3>Thông tin đơn hàng</h3>
+                </div>
+                <div class="content-detail">
+                    <p><strong>Đơn hàng được tạo bởi:&emsp;</strong>{{ order.user.username }}</p>
+                    <p><strong>Tên đơn hàng:&emsp;</strong>{{ order.name }}</p> 
+                    <p><strong>Order ID:&emsp;</strong>{{ order.order_id }}</p>
+                    <p><strong>Ngày tạo:&emsp;</strong>{{ order.created }}</p>
+                    <p><strong>Trạng thái:&emsp;</strong>{{ order.status }}</p>
+                    <p><strong>Freesize:&emsp;</strong>{{ order.freesize }}</p>
+    
+                    <table id="frSizeTB">
+                        <tr>
+                            <th>XS</th>
+                            <th>S</th>
+                            <th>M</th>
+                            <th>L</th>
+                            <th>XL</th>
+                            <th>XXL</th>
+                            <th>3XL</th>
+                            <th>Tổng SL</th>
+                        </tr>
+                        <tr>
+                            <td>{{ order.size_xs_quantity }}</td>
+                            <td>{{ order.size_s_quantity }}</td>
+                            <td>{{ order.size_m_quantity }}</td>
+                            <td>{{ order.size_l_quantity }}</td>
+                            <td>{{ order.size_xl_quantity }}</td>
+                            <td>{{ order.size_xxl_quantity }}</td>
+                            <td>{{ order.size_3xl_quantity }}</td>
+                            <td>{{ total_quantity }}</td>
+                        </tr>
+                    </table>
+
+                    <table id="nonfreeSizeTB"> 
+                        <tr>
+                            <th>Phân loại</th>
+                            <th>XS</th>
+                            <th>S</th>
+                            <th>M</th>
+                            <th>L</th>
+                            <th>XL</th>
+                            <th>XXL</th>
+                            <th>3XL</th>
+                            <th>Tổng SL</th>
+                        </tr>
+                        <tr>
+                            <td>Size nam</td>
+                            <td>{{ order.male_size_xs_quantity }}</td>
+                            <td>{{ order.male_size_s_quantity }}</td>
+                            <td>{{ order.male_size_m_quantity }}</td>
+                            <td>{{ order.male_size_l_quantity }}</td>
+                            <td>{{ order.male_size_xl_quantity }}</td>
+                            <td>{{ order.male_size_xxl_quantity }}</td>
+                            <td>{{ order.male_size_3xl_quantity }}</td>
+                            <td>{{ order.total_quantity_male }}</td>
+                        </tr>
+                        <tr>
+                            <td>Size Nữ</td>
+                            <td>{{ order.female_size_xs_quantity }}</td>
+                            <td>{{ order.female_size_s_quantity }}</td>
+                            <td>{{ order.female_size_m_quantity }}</td>
+                            <td>{{ order.female_size_l_quantity }}</td>
+                            <td>{{ order.female_size_xl_quantity }}</td>
+                            <td>{{ order.female_size_xxl_quantity }}</td>
+                            <td>{{ order.female_size_3xl_quantity }}</td>
+                            <td>{{ order.total_quantity_female }}</td>
+                        </tr>
+                    </table>
+    
+                    <p><strong>Kiểu dáng:&emsp;</strong>{{ order.style }}</p>
+                    <p><strong>Màu sắc:&emsp;</strong>{{ order.color }}</p>
+                    <p><strong>Bo cổ / Bo tay:&emsp;</strong>{{ order.collar }}</p>
+                    <p><strong>Trụ áo:&emsp;</strong>{{ order.pillar }}</p>
+                    <p><strong>Chất liệu:&emsp;</strong>{{ order.material }}</p> 
+                    <p><strong>Logo:&emsp;</strong>{{ order.has_logo }}</p>
+                    <p><strong>Logo in:&emsp;</strong>{{ order.custom_logo }}</p>
+                    <p><strong>Link Logo:&emsp;</strong>{{ order.custom_logo_url }}</p>
+    
+                </div>
+            </div>
+        </div>
+    
+        <div class="right-column">
+            <div class="content-block" id="billStatus">
+                <div class="content-header">
+                    <h3>Trạng thái thanh toán</h3>
+                </div>
+                <div class="content-detail">
+                    <table>
+                        <tr>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th>Đã cọc</th>
+                            <th>Còn lại</th>
+                        </tr>
+                        <tr>
+                            <td>{{ order.unit_price}}</td>
+                            <td>{{ order.total_quantity }}</td>
+                            <td>{{ order.total_price }}</td>
+                            <td>{{ order.paid }}</td>
+                            <td>{{ order.unpaid }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const sizeTB = document.getElementById("frSizeTB");
+                    const nonSizeTB = document.getElementById("nonfreeSizeTB");
+                    const freesize = "{{ order.freesize }}";
+
+                    if (freesize == "True") {
+                        sizeTB.style.display = "compact";
+                        nonSizeTB.style.display = "none";
+                    } else {
+                        sizeTB.style.display = "none";
+                        nonSizeTB.style.display = "compact";
+                    }
+                });
+
+            </script>
+
+            <div class="content-block" id="functionBar">
+                <div class="content-header">
+                    <h3>Tùy chọn</h3>
+                </div>
+                <div class="content-detail">
+                    <a href="{% url 'edit_order' order.id %}"><button>Sửa đơn</button></a>
+                    <form method="post" action="{% url 'delete_order' order.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Xóa đơn hàng</button>
+                    </form>                    
+                    <button class="btn btn-primary" id="btnPrintOrder" data-order-id="{{ order.id }}">In đơn hàng</button>
+                    <button class="btn btn-primary" id="btnPrintMO" data-order-id="{{ order.id }}">In lệnh SX</button>
+                </div>
+            </div>
+<!-- Trong template.html -->
+
+<!-- Trong template.html -->
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const btnPrintOrder = document.getElementById("btnPrintOrder");
+                    const btnPrintMO = document.getElementById("btnPrintMO");
+
+                    btnPrintOrder.addEventListener("click", function() {
+                        // Lấy order_id từ thuộc tính data
+                        const order_id = btnPrintOrder.getAttribute("data-order-id");
+
+                        // Mở cửa sổ in với URL mới để xử lý việc in
+                        window.open(`/print_order/${order_id}/`, '_blank');
+                    });
+
+                    btnPrintMO.addEventListener("click", function() {
+                        // Lấy order_id từ thuộc tính data
+                        const order_id = btnPrintMO.getAttribute("data-order-id");
+
+                        // Mở cửa sổ in với URL mới để xử lý việc in
+                        window.open(`/print_mo/${order_id}/`, '_blank');
+                    });
+                });
+            </script>
+
+
+            
+
+
+        </div>
+    </div>
+</main>
+
+{% endblock content %}
+

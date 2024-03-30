@@ -1,0 +1,22 @@
+{% load static %}
+<header class="header" id="header">
+    <nav class="nav container">
+        <img src="{% static 'img/LOGODPV2.png' %}" alt="" class="nav_icon">
+
+
+        <div class="nav_menu" id="nav-menu">
+            <ul class="nav_list grid">
+                <li class="nav_item">
+                    <a href="/" class="nav_link">
+                        Home
+                    </a>
+                </li>
+                <li class="nav_item">
+                    <a href="{% url 'create-order' %}" class="nav_link">
+                        Tạo đơn hàng mới
+                    </a>
+                </li>                                              
+            </ul>
+        </div>
+    </nav>
+</header>

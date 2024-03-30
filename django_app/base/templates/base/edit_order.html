@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+    <div id="container">
+        <div class="left-column">
+            <div class="content-block" id="editOrder">
+                <div class="content-header">
+                    <h3>Sửa đơn hàng</h3>
+                </div>
+                <div class="content-detail">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit">Lưu thay đổi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content %}

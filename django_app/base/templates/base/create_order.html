@@ -1,0 +1,263 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block content %}
+<main>
+    <div id="container">
+        <div class="left-column">
+            <div class="content-block" id="createOrder">
+                <div class="content-header">
+                    <h3>Tạo đơn hàng</h3>
+                </div>
+                <div class="content-detail">
+                    <form method="POST" id="orderForm">
+                        {% csrf_token %}
+                        {{ customer_form.as_p }}
+                        
+                        <label>Tên đơn hàng:</label>
+                        {{ order_form.name }}
+
+                        <label>Tình trạng đơn hàng:</label>
+                        {{ order_form.status }}
+
+                        <label>Ngày giao dự kiến:</label>
+                        {{ order_form.expected_date }}
+
+                        <label>Kiểu dáng:</label>
+                        {{ order_form.style }}
+
+                        <label>Chất liệu:</label>
+                        {{ order_form.material }}
+
+                        <label>Màu sắc:</label>
+                        {{ order_form.color }}
+
+                        <label>Bo tay / Bo cổ:</label>
+                        {{ order_form.collar }}
+
+                        <label>Trụ áo:</label>
+                        {{ order_form.pillar }}
+
+                        <label>In/Thêu:</label>
+                        {{ order_form.custom_logo }}
+
+                        <label>Đơn giá:</label>
+                        {{ order_form.unit_price }}
+
+                        <label>Freesize:</label>
+                        {{ order_form.freesize }}
+
+                        <table id="freeSizeTB">
+                            <thead>
+                                <tr>
+                                    <th>Free Size</th>
+                                    <th>XS</th>
+                                    <th>S</th>
+                                    <th>M</th>
+                                    <th>L</th>
+                                    <th>XL</th>
+                                    <th>XXL</th>
+                                    <th>3XL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Số lượng</th>
+                                    <td>{{ order_form.size_xs_quantity }}</td>
+                                    <td>{{ order_form.size_s_quantity }}</td>
+                                    <td>{{ order_form.size_m_quantity }}</td>
+                                    <td>{{ order_form.size_l_quantity }}</td>
+                                    <td>{{ order_form.size_xl_quantity }}</td>
+                                    <td>{{ order_form.size_xxl_quantity }}</td>
+                                    <td>{{ order_form.size_3xl_quantity }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table id="maleSizeTB">
+                            <thead>
+                                <tr>
+                                    <th>Size Nam</th>
+                                    <th>XS</th>
+                                    <th>S</th>
+                                    <th>M</th>
+                                    <th>L</th>
+                                    <th>XL</th>
+                                    <th>XXL</th>
+                                    <th>3XL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Số lượng</th>
+                                    <td>{{ order_form.male_size_xs_quantity }}</td>
+                                    <td>{{ order_form.male_size_s_quantity }}</td>
+                                    <td>{{ order_form.male_size_m_quantity }}</td>
+                                    <td>{{ order_form.male_size_l_quantity }}</td>
+                                    <td>{{ order_form.male_size_xl_quantity }}</td>
+                                    <td>{{ order_form.male_size_xxl_quantity }}</td>
+                                    <td>{{ order_form.male_size_3xl_quantity }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table id="femaleSizeTB">
+                            <thead>
+                                <tr>
+                                    <th>Size Nữ</th>
+                                    <th>XS</th>
+                                    <th>S</th>
+                                    <th>M</th>
+                                    <th>L</th>
+                                    <th>XL</th>
+                                    <th>XXL</th>
+                                    <th>3XL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Số lượng</th>
+                                    <td>{{ order_form.female_size_xs_quantity }}</td>
+                                    <td>{{ order_form.female_size_s_quantity }}</td>
+                                    <td>{{ order_form.female_size_m_quantity }}</td>
+                                    <td>{{ order_form.female_size_l_quantity }}</td>
+                                    <td>{{ order_form.female_size_xl_quantity }}</td>
+                                    <td>{{ order_form.female_size_xxl_quantity }}</td>
+                                    <td>{{ order_form.female_size_3xl_quantity }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <button type="submit">Tạo đơn hàng</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="content-block" id="preBill">
+                <div class="content-header">
+                    <h3>Bảng tạm tính giá đơn hàng</h3>
+                </div>
+                <div class="content-detail">
+                    <table id="price-table">
+                        <tr>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Tổng cộng</th>
+                        </tr>
+                        <tr>
+                            <td id="quantity-display"></td>
+                            <td id="unit-price"></td>
+                            <td id="total-price"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+
+            <script>
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    const orderForm = document.getElementById('orderForm');
+                    const unitPriceInput = document.getElementById('unit-price-input');
+                    const unitPriceDisplay = document.getElementById('unit-price');
+                    const totalDisplay = document.getElementById('total-price');
+                    const freesizeCheckbox = document.getElementById('id_freesize');
+                    const sizeTB = document.getElementById('freeSizeTB');
+                    const maleSizeTB = document.getElementById('maleSizeTB');
+                    const femaleSizeTB = document.getElementById('femaleSizeTB');
+                    const sizeFields = document.querySelectorAll('#size_xs_quantity_field, #size_s_quantity_field, #size_m_quantity_field, #size_l_quantity_field, #size_xl_quantity_field, #size_xxl_quantity_field, #size_3xl_quantity_field');
+                    const maleSizeFields = document.querySelectorAll('#male_size_xs_quantity_field, #male_size_s_quantity_field, #male_size_m_quantity_field, #male_size_l_quantity_field, #male_size_xl_quantity_field, #male_size_xxl_quantity_field, #male_size_3xl_quantity_field');
+                    const femaleSizeFields = document.querySelectorAll('#female_size_xs_quantity_field, #female_size_s_quantity_field, #female_size_m_quantity_field, #female_size_l_quantity_field, #female_size_xl_quantity_field, #female_size_xxl_quantity_field, #female_size_3xl_quantity_field');
+
+                    let freesizeChecked = freesizeCheckbox.checked;
+
+                    function freesize() {
+                        sizeTB.style.display = 'block';
+                        maleSizeTB.style.display = 'none';
+                        femaleSizeTB.style.display = 'none';
+                    }
+
+                    function nonFree() {
+                        sizeTB.style.display = 'none';
+                        maleSizeTB.style.display = 'block';
+                        femaleSizeTB.style.display = 'block';
+                    }
+
+                    function handleFreesize() {
+                        freesizeChecked = freesizeCheckbox.checked;
+                        if (freesizeChecked) {
+                            freesize();
+                        } else {
+                            nonFree();
+                        }
+                    }
+
+                    freesizeCheckbox.addEventListener('change', function () {
+                        handleFreesize();
+                    });
+
+                    handleFreesize();
+
+                    function updateTotalPrice() {
+                        let totalQuantity = 0;
+                        if (freesizeChecked) {
+                            sizeFields.forEach(function (field) {
+                                const quantity = parseInt(field.value) || 0;
+                                totalQuantity += quantity;
+                            });
+                        } else {
+                            maleSizeFields.forEach(function (field) {
+                                const quantity = parseInt(field.value) || 0;
+                                totalQuantity += quantity;
+                            });
+
+                            // Tính tổng số lượng cho các trường kích cỡ nữ
+                            femaleSizeFields.forEach(function (field) {
+                                const quantity = parseInt(field.value) || 0;
+                                totalQuantity += quantity;
+                            });
+                        }
+
+                        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+                        const totalPrice = unitPrice * totalQuantity;
+
+                        document.getElementById('quantity-display').textContent = totalQuantity.toLocaleString();
+                        unitPriceDisplay.textContent = unitPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                        totalDisplay.textContent = totalPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                    }
+
+                    // Listen for input change on size fields
+                    sizeFields.forEach(function (field) {
+                        field.addEventListener('input', function () {
+                            updateTotalPrice();
+                        });
+                    });
+
+                    maleSizeFields.forEach(function (field) {
+                        field.addEventListener('input', function () {
+                            updateTotalPrice();
+                        });
+                    });
+
+                    femaleSizeFields.forEach(function (field) {
+                        field.addEventListener('input', function () {
+                            updateTotalPrice();
+                        });
+                    });
+
+                    // Listen for input change on unit price field
+                    unitPriceInput.addEventListener('input', function () {
+                        updateTotalPrice();
+                    });
+                });
+
+            </script>
+            
+    </div>    
+</main>
+
+
+{% endblock content %}

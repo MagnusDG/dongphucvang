@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/finalstyle.css' %}" />
+  <title>Document</title>
+</head>
+<body>
+  <main class="auth layout">
+    <div class="container">
+      <div class="layout__box">
+        <div class="layout__boxHeader">
+          <div class="layout__boxTitle">
+            <h3>Quản Lý Đơn Hàng</h3>
+          </div>
+        </div>
+        <div class="layout__body">
+          <form class="form" action="" method="POST">
+            {% csrf_token %}
+            <div class="form__group form__group">
+              <label for="room_name">Tài khoản</label>
+              <input id="username" name="username" type="text" placeholder="username" />
+            </div>
+            <div class=" form__group">
+              <label for="password">Mật khẩu</label>
+              <input id="password" name="password" type="password"
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+            </div>
+  
+            <button type="submit">
+              <a href="{% url 'login' %}"  id="login-to-hv">Login</a>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
+
+

@@ -1,0 +1,160 @@
+<!-- employee_orders.html -->
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Reset CSS */
+/* Đặt margin và padding về 0 */
+body,
+html,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+div,
+table,
+th,
+td,
+form,
+input,
+button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Tùy chỉnh font chữ và màu sắc */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 10px;
+}
+
+/* Các phần tử form */
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    margin-right: 10px;
+}
+
+input[type="month"],
+button {
+    padding: 8px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+button {
+    margin-left: 10px;
+}
+
+/* Bảng thông tin đơn hàng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+</style>
+
+
+<script>
+    
+</script>
+
+
+
+    <div class="content-block" id="employeeInfo">
+        <div class="content-header">
+            <h3>Thông tin nhân viên</h3>
+        </div>
+        <div class="content-detail">
+            <table id="employee-info-table">
+                <tr>
+                    <th>Tên nhân viên</th>
+                    <td>{{ user }}</td>
+                </tr>
+                <tr>
+                    <th>Chức vụ</th>
+                    <td>{{ user.position }}</td>
+                </tr>
+                <tr>
+                    <th>Địa chỉ</th>
+                    <td>{{ user.address }}</td>
+                </tr>
+                <tr>
+                    <th>Số điện thoại</th>
+                    <td>{{ user.phone }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ user.email }}</td>
+                </tr>
+            </table>
+        </div>
+
+
+    <form method="GET" id="month-form" action="">
+        {% csrf_token %}
+        <label for="month-picker">Chọn tháng:</label>
+        <input type="month" id="month-picker" name="selected_month">
+        <button type="submit">Lọc</button>
+    </form>
+    
+
+    <h3>Thông tin đơn hàng của {{ user }} trong tháng {{ selected_month }}</h3>
+    
+    {% if orders %}
+    <table id="order-by-you">
+        <thead>
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Tên khách hàng</th>
+                <th>Ngày tạo</th>
+                <th>Tình trạng</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td><a href="{% url 'order' order.id %}">Đơn hàng #{{ order.order_id }}</a></td>
+                    <td>{{ order.customer }}</td>
+                    <td>{{ order.created }}</td>
+                    <td>{{ order.status }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Không có đơn hàng nào trong tháng này.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endblock content %}

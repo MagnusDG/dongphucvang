@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Đơn Đặt Hàng</title>
+  <style>
+    /* Style cho template */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .logo {
+      max-width: 150px;
+      height: auto;
+      margin-right: 20px;
+    }
+    .company-info {
+      flex: 3;
+      text-align: center;
+    }
+    .company-info h2 {
+      margin: 5px 0;
+    }
+    .title {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .signature {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+    }
+    .signature img {
+      max-width: 150px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="D:\WebAppPJ\order_management\django_app\static\img\Picture1.png" alt="Logo công ty" class="logo">
+      <div class="company-info">
+        <h2>Trọng Tín Hưng</h2>
+        <p>ĐC: 35/14 Nguyễn Hữu Tiến, P. Tây Thạnh, Q. Tân Phú, TPHCM</p>
+        <p>ĐT: (028) 3812 2147 - 0933 133 219 - Email: nthieu80@gmail.com</p>
+      </div>
+    </header>
+
+    //thông tin khách hàng
+    <section>
+      <h2>THÔNG TIN KHÁCH HÀNG</h2>
+      <p><strong>Tên khách hàng:&emsp;</strong>{{ order.customer.last_name }} {{ order.customer.first_name }}</p>
+      <p><strong>Địa chỉ:&emsp;</strong>{{ order.customer.address }}</p>
+      <p><strong>Số điện thoại:&emsp;</strong>{{ order.customer.phone_number }}</p>
+      <p><strong>Email:&emsp;</strong>{{ order.customer.email }}</p>
+
+    <div class="content-block" id="orderInfo">
+      <div class="content-header">
+          <h3>Thông tin đơn hàng</h3>
+      </div>
+      <div class="content-detail">
+
+          <table id="frSizeTB">
+              <tr>
+                  <th>XS</th>
+                  <th>S</th>
+                  <th>M</th>
+                  <th>L</th>
+                  <th>XL</th>
+                  <th>XXL</th>
+                  <th>3XL</th>
+                  <th>Tổng SL</th>
+              </tr>
+              <tr>
+                  <td>{{ order.size_xs_quantity }}</td>
+                  <td>{{ order.size_s_quantity }}</td>
+                  <td>{{ order.size_m_quantity }}</td>
+                  <td>{{ order.size_l_quantity }}</td>
+                  <td>{{ order.size_xl_quantity }}</td>
+                  <td>{{ order.size_xxl_quantity }}</td>
+                  <td>{{ order.size_3xl_quantity }}</td>
+                  <td>{{ total_quantity }}</td>
+              </tr>
+          </table>
+
+          <table id="nonfreeSizeTB"> 
+              <tr>
+                  <th>Phân loại</th>
+                  <th>XS</th>
+                  <th>S</th>
+                  <th>M</th>
+                  <th>L</th>
+                  <th>XL</th>
+                  <th>XXL</th>
+                  <th>3XL</th>
+                  <th>Tổng SL</th>
+              </tr>
+              <tr>
+                  <td>Size nam</td>
+                  <td>{{ order.male_size_xs_quantity }}</td>
+                  <td>{{ order.male_size_s_quantity }}</td>
+                  <td>{{ order.male_size_m_quantity }}</td>
+                  <td>{{ order.male_size_l_quantity }}</td>
+                  <td>{{ order.male_size_xl_quantity }}</td>
+                  <td>{{ order.male_size_xxl_quantity }}</td>
+                  <td>{{ order.male_size_3xl_quantity }}</td>
+                  <td>{{ total_quantity_male }}</td>
+              </tr>
+              <tr>
+                  <td>Size Nữ</td>
+                  <td>{{ order.female_size_xs_quantity }}</td>
+                  <td>{{ order.female_size_s_quantity }}</td>
+                  <td>{{ order.female_size_m_quantity }}</td>
+                  <td>{{ order.female_size_l_quantity }}</td>
+                  <td>{{ order.female_size_xl_quantity }}</td>
+                  <td>{{ order.female_size_xxl_quantity }}</td>
+                  <td>{{ order.female_size_3xl_quantity }}</td>
+                  <td>{{ total_quantity_female }}</td>
+              </tr>
+          </table>
+
+          <p><strong>Kiểu dáng:&emsp;</strong>{{ order.style }}</p>
+          <p><strong>Màu sắc:&emsp;</strong>{{ order.color }}</p>
+          <p><strong>Bo cổ / Bo tay:&emsp;</strong>{{ order.collar }}></p>
+          <p><strong>Trụ áo:&emsp;</strong>{{ order.pillar }}</p>
+          <p><strong>Chất liệu:&emsp;</strong>{{ order.material }}</p> 
+          <p><strong>Logo:&emsp;</strong>{{ order.has_logo }}</p>
+      </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const sizeTB = document.getElementById("frSizeTB");
+        const nonSizeTB = document.getElementById("nonfreeSizeTB");
+        const freesize = "{{ order.freesize }}";
+
+        if (freesize == "True") {
+            sizeTB.style.display = "compact";
+            nonSizeTB.style.display = "none";
+        } else {
+            sizeTB.style.display = "none";
+            nonSizeTB.style.display = "compact";
+        }
+    });
+
+</script>
+
+      <h2>THANH TOÁN & GIAO HÀNG</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Số lượng</th>
+            <th>ĐVT</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+            <th>Đặt cọc</th>
+            <th>Còn lại</th>
+            <th>Ngày đặt</th>
+            <th>Ngày giao dự kiến</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ order.total_quantity }}</td>
+            <td>Cái</td>
+            <td>{{ order.unit_price }}</td>
+            <td>{{ order.total_price }}</td>
+            <td>{{ order.paid }}</td>
+            <td>{{ order.unpaid }}</td>
+            <td>{{ order.created }}</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Thuế VAT 8%&emsp;</strong></td>
+            <td>{{ order.vat_price }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Tổng tiền thanh toán&emsp;</strong></td>
+            <td>{{ order.total_price_vat }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{ order.expected_date }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </section>
+
+    <div class="signature">
+      <div>
+        <p>Khách hàng</p>
+        <!-- Đặt link đến chữ ký khách hàng (nếu có) -->
+      </div>
+      <div>
+        <p>Nhân viên</p>
+        <!-- Đặt link đến chữ ký nhân viên (nếu có) -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>
